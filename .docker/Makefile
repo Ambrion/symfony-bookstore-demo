@@ -1,9 +1,9 @@
-export PUID=$(id -u $USER)
-export PGID=$(id -g $USER)
+export PUID ?= $(shell id -u)
+export PGID ?= $(shell id -g)
 
 build:
 	if [ ! -f .env ]; then cp .env.dist .env; fi
-	docker compose build --build-arg PUID=$PUID --build-arg PGID=$PGID
+	docker compose build --build-arg PUID=$(PUID) --build-arg PGID=$(PGID)
 install:
 	docker compose exec --user dev php composer install
 start:
