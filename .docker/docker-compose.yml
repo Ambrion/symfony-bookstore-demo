@@ -23,6 +23,8 @@ services:
         XDEBUG_CLIENT_PORT: ${PHP_XDEBUG_CLIENT_PORT}
         XDEBUG_START_WITH_REQUEST: ${PHP_XDEBUG_START_WITH_REQUEST}
         XDEBUG_MODE: ${PHP_XDEBUG_MODE}
+        PUID: 1000
+        PGID: 1000
     restart: always
     working_dir: /app
     env_file:

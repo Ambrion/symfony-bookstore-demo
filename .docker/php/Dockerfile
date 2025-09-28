@@ -45,8 +45,8 @@ RUN apk add --no-cache --virtual .build-deps gettext \
 RUN sed -i 's/;ping.path/ping.path/' /usr/local/etc/php-fpm.d/www.conf
 
 ### user ###
-RUN addgroup -g ${PGID} dev \
-    && adduser -D -u ${PUID} -G dev dev \
+RUN addgroup -g ${PGID:-1000} dev \
+    && adduser -D -u ${PUID:-1000} -G dev dev \
     && echo dev:pwd | chpasswd
 
 RUN echo "%dev ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
