@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Демо-проект книжного магазина{% endblock %}</title>
+    {% block meta_data %}{% endblock %}
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    {% block stylesheets %}{% endblock %}
+
+    {% block javascripts %}{% endblock %}
+</head>
+<body>
+<header data-bs-theme="dark" class="mb-5">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link{{ (app.request.attributes.get('_route') == 'app_home') ? ' active' }}" aria-current="page" href="{{ url('app_home') }}">
+                            Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link{{ (app.request.attributes.get('_route') == 'app_front_contact_page_index') ? ' active' }}" aria-current="page" href="{{ url('app_front_contact_page_index') }}">
+                            Контакты
+                        </a>
+                    </li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{{ url('app-admin-dashboard-index') }}">
+                                Вернуться в админку
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link{{ (app.request.attributes.get('_route') == 'app_login') ? ' active' }}" aria-current="page" href="{{ url('app_login') }}">
+                                Вход
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<main class="pt-1 pt-xl-5">
+    <div class="container">
+        {% block body %}{% endblock %}
+    </div>
+</main>
+</body>
+<script src="/assets/js/bootstrap.bundle.min.js"></script>
+</html>

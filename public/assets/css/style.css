@@ -1,0 +1,20 @@
+label.required:after {
+    content: " *"; /* Adds an asterisk after the label */
+    color: red; /* Optional: styles the asterisk in red */
+}
+/* Fix for bootstrap-select when not 100% width */
+.bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 100%;
+}
+
+.toast:not(.show) {
+    display: block;
+}
+
+.toast-container {
+    z-index: 99999;
+}
+
+.toast:not(.show) {
+    display: block;
+}

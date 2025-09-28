@@ -1,0 +1,11 @@
+front_controllers:
+    resource:
+        path: ../src/Front/Controller/
+        namespace: App\Front\Controller
+    type: attribute
+
+auth_controllers:
+    resource:
+        path: ../src/Auth/Controller/
+        namespace: App\Auth\Controller
+    type: attribute

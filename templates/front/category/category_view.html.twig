@@ -1,0 +1,181 @@
+{% extends 'layout/base-front-layout.html.twig' %}
+
+{% block title %}{{ category.title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        {% if breadcrumbs is defined %}
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    {% for breadcrumb in breadcrumbs %}
+                        {% if breadcrumb.url %}
+                            <li class="breadcrumb-item"><a href="{{ breadcrumb.url }}">{{ breadcrumb.title }}</a></li>
+                        {% else %}
+                            <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.title }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+            </nav>
+        {% endif %}
+
+        <h1>Книги категории "{{ category.title }}"</h1>
+
+        <!-- Search Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="title" class="form-label">Название книги</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ searchTitle }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="author" class="form-label">Автор</label>
+                        <input type="text" class="form-control" id="author" name="author" value="{{ searchAuthor }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Статус</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">Все статусы</option>
+                            <option value="PUBLISH" {% if searchStatus == 'PUBLISH' %}selected{% endif %}>Опубликовано</option>
+                            <option value="DRAFT" {% if searchStatus == 'DRAFT' %}selected{% endif %}>Черновик</option>
+                            <option value="REVIEW" {% if searchStatus == 'REVIEW' %}selected{% endif %}>На проверке</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Поиск</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if category.children is not empty %}
+            <h5>Подкатегории</h5>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for category in category.children %}
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="{{ url('category_view', { 'slug': category.slug }) }}">{{ category.title }}</a></h5>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if books is not empty %}
+            <div class="row row-cols-1 row-cols-md-6 g-4 mt-4">
+                {% for book in books %}
+                    <div class="col">
+                        <div class="card h-100">
+                            {% if book.image %}
+                                <img src="{{ imageDestination ~ book.image }}" class="card-img-top" alt="{{ book.title }}">
+                            {% else %}
+                                <img src="https://placehold.jp/150x188.png" class="card-img-top" alt="{{ book.title }}">
+                            {% endif %}
+
+                            <div class="card-body">
+                                <h5 class="card-title">{{ book.title }}</h5>
+                                {% if book.categories is not empty %}
+                                    <p class="card-text">
+                                        <strong>Категория:</strong>
+                                        {% for category in book.categories %}
+                                            {{ category.title }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                                {% if book.authors is not empty %}
+                                    <p class="card-text">
+                                        <strong>Автор:</strong>
+                                        {% for author in book.authors %}
+                                            {{ author.title }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url('book_view', { 'slug': book.slug }) }}" class="btn btn-primary w-100">Подробнее</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if totalPages > 1 %}
+                <nav aria-label="Page navigation example" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if currentPage > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': currentPage-1}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">Предыдущие</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Предыдущие</span>
+                            </li>
+                        {% endif %}
+
+                        {% if totalPages <= 5 %}
+                            {% for i in 1..totalPages %}
+                                <li class="page-item{% if i == currentPage %} active{% endif %}">
+                                    <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': i}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">{{ i }}</a>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            {% if currentPage <= 3 %}
+                                {% for i in 1..4 %}
+                                    <li class="page-item{% if i == currentPage %} active{% endif %}">
+                                        <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': i}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">{{ i }}</a>
+                                    </li>
+                                {% endfor %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': totalPages}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">{{ totalPages }}</a>
+                                </li>
+                            {% elseif currentPage >= totalPages - 2 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': 1}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">1</a>
+                                </li>
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% for i in (totalPages - 3)..totalPages %}
+                                    <li class="page-item{% if i == currentPage %} active{% endif %}">
+                                        <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': i}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">{{ i }}</a>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': 1}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">1</a>
+                                </li>
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% for i in (currentPage - 1)..(currentPage + 1) %}
+                                    <li class="page-item{% if i == currentPage %} active{% endif %}">
+                                        <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': i}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">{{ i }}</a>
+                                    </li>
+                                {% endfor %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': totalPages}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">{{ totalPages }}</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if currentPage < totalPages %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url('category_view', {'slug': category.slug, 'page': currentPage+1}) ~ (searchTitle ? '&title=' ~ searchTitle) ~ (searchAuthor ? '&author=' ~ searchAuthor) ~ (searchStatus ? '&status=' ~ searchStatus) }}">Следующие</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Следующие</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="mt-4">
+                <div class="alert alert-info">
+                    В данной категории книги отсутствуют.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

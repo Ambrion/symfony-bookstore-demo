@@ -1,0 +1,95 @@
+{% extends 'layout/base-front-layout.html.twig' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-2">
+                {% if book.image %}
+                    <img src="{{ imageDestination ~ book.image }}" class="img-fluid" alt="{{ book.title }}">
+                {% else %}
+                    <img src="https://placehold.jp/150x188.png" class="img-fluid" alt="{{ book.title }}">
+                {% endif %}
+            </div>
+            <div class="col-md-10">
+                <h1 class="card-title">{{ book.title }}</h1>
+                {% if book.isbn is not empty %}
+                    <p class="card-text">
+                        <strong>Артикул:</strong>
+                        {{ book.isbn }}
+                    </p>
+                {% endif %}
+                {% if book.categories is not empty %}
+                    <p class="card-text">
+                        <strong>Категория:</strong>
+                        {% for category in book.categories %}
+                            <a href="{{ path('category_view', {'slug': category.slug}) }}">{{ category.title }}</a>{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+                {% if book.authors is not empty %}
+                    <p class="card-text">
+                        <strong>Автор:</strong>
+                        {% for author in book.authors %}
+                            {{ author.title }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+                {% if book.pageCount is not empty %}
+                    <p class="card-text">
+                        <strong>Кол-во страниц:</strong> {{ book.pageCount }}
+                    </p>
+                {% endif %}
+                {% if book.shortDescription is not empty %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Короткое описание</h5>
+                            {{ book.shortDescription|raw }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <h5>Рекомендованные книги</h5>
+        {% if relatedBooks is not empty %}
+            <div class="row row-cols-1 row-cols-md-6 g-4 mt-4">
+                {% for related in relatedBooks %}
+                    <div class="col">
+                        <div class="card h-100">
+                            {% if related.image %}
+                                <img src="{{ imageDestination ~ related.image }}" class="card-img-top" alt="{{ related.title }}">
+                            {% else %}
+                                <img src="https://placehold.jp/150x188.png" class="card-img-top" alt="{{ related.title }}">
+                            {% endif %}
+
+                            <div class="card-body">
+                                <h5 class="card-title">{{ related.title }}</h5>
+                                {% if related.categories is not empty %}
+                                    <p class="card-text">
+                                        <strong>Категория:</strong>
+                                        {% for category in related.categories %}
+                                            {{ category.title }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                                {% if related.authors is not empty %}
+                                    <p class="card-text">
+                                        <strong>Автор:</strong>
+                                        {% for author in related.authors %}
+                                            {{ author.title }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url('book_view', { 'slug': related.slug }) }}" class="btn btn-primary w-100">Подробнее</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
