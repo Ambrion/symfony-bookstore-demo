@@ -70,4 +70,7 @@ services:
           XDEBUG_MODE: ${PHP_XDEBUG_MODE}
           PUID: ${PUID}
           PGID: ${PGID}
+      working_dir: /app
+      volumes:
+        - ../:/app
       command: php bin/console messenger:consume contactForm --time-limit=3600
