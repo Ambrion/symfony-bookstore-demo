@@ -270,7 +270,7 @@ readonly class ParseBookFromUrlManager implements ParseBookFromUrlManagerInterfa
 
             $importDir = $appPublicUploadDir.$appImportUploadDir;
             if (!is_dir($importDir)) {
-                mkdir($importDir, 0644, true);
+                mkdir($importDir, 0700, true);
             }
 
             $timestamp = date('Y-m-d_H-i-s');
