@@ -50,9 +50,10 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
-      timeout: 20s
-      retries: 10
+        test: ["CMD-SHELL", "mysqladmin ping -u root -p\"$$MYSQL_ROOT_PASSWORD\""]
+        timeout: 20s
+        retries: 10
+        start_period: 10s
   mailer:
       container_name: bookstore_mailer
       image: axllent/mailpit
