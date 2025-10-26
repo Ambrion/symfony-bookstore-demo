@@ -28,12 +28,12 @@ jobs:
               run: |
                   docker compose up -d --wait
 
-#            - name: Wait for MySQL readiness (optional extra safety)
-#              working-directory: .docker
-#              run: |
-#                  docker compose exec -T mysql mysqladmin ping -h mysql -u root --password="$MYSQL_ROOT_PASSWORD" --silent
-#              env:
-#                  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD || 'root' }}
+            - name: Wait for MySQL readiness (optional extra safety)
+              working-directory: .docker
+              run: |
+                  docker compose exec -T mysql mysqladmin ping -h mysql -u root --password="$MYSQL_ROOT_PASSWORD" --silent
+              env:
+                  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD || 'root' }}
 
             - name: Install Composer dependencies (inside php container)
               working-directory: .docker
