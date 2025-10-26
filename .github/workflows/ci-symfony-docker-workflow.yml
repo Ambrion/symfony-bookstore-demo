@@ -19,9 +19,6 @@ jobs:
               run: |
                   # GitHub Actions не подхватывает .env автоматически — создадим его
                   cp .env.dist .env
-                  # Или можно задать переменные напрямую, если .env не в репозитории
-                  # echo "APP_ENV=test" >> .env
-                  # echo "DATABASE_URL=mysql://bookstore_user:bookstore_password@mysql:3306/bookstore_db?serverVersion=8" >> .env
 
             - name: Start Docker Compose services
               working-directory: .docker
@@ -41,8 +38,8 @@ jobs:
             - name: Run database migrations (if needed for tests)
               working-directory: .docker
               run: |
-                  docker compose exec -T php bin/console doctrine:database:create --if-not-exists --env=test
-                  docker compose exec -T php bin/console doctrine:migrations:migrate --no-interaction --env=test
+                  docker compose exec -T mysql php bin/console doctrine:database:create --if-not-exists --env=test
+                  docker compose exec -T mysql php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
             - name: Run PHPUnit tests
               working-directory: .docker
