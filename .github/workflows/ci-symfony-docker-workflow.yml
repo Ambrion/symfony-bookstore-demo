@@ -19,8 +19,6 @@ jobs:
               run: |
                   # GitHub Actions не подхватывает .env автоматически — создадим его
                   cp .env.dist .env
-                  echo "APP_ENV=test" >> .env
-                  echo "DATABASE_URL="mysql://user_bookstore:password_bookstore@mysql:3306/db_bookstore?serverVersion=9.3.0&charset=utf8mb4"" >> .env
                   # Или можно задать переменные напрямую, если .env не в репозитории
                   # echo "APP_ENV=test" >> .env
                   # echo "DATABASE_URL=mysql://bookstore_user:bookstore_password@mysql:3306/bookstore_db?serverVersion=8" >> .env
