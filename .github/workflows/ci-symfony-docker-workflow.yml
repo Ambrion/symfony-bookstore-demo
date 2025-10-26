@@ -35,6 +35,12 @@ jobs:
               run: |
                   docker compose exec -T -u root php composer install --prefer-dist --no-progress --no-interaction
 
+            - name: Prepare .env in project root
+              working-directory: .docker
+              run: |
+                  echo "APP_ENV=test" >> .env
+                  echo 'DATABASE_URL="mysql://user_bookstore:password_bookstore@bookstore_mysql:3306/db_bookstore?serverVersion=9.3.0&charset=utf8mb4"' >> .env
+
             - name: Run database migrations (if needed for tests)
               working-directory: .docker
               run: |
