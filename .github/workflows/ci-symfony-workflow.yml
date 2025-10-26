@@ -1,0 +1,52 @@
+name: Symfony CI/CD Pipeline (with custom Docker)
+
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Docker Compose
+              run: |
+                  cd .docker
+                  docker compose version
+                  docker compose up -d --build
+
+            - name: Wait for MySQL to be ready
+              run: |
+                  cd .docker
+                  timeout 60s bash -c 'until docker compose exec -T mysql mysqladmin ping -h localhost --silent; do sleep 2; done' || (docker compose logs mysql && exit 1)
+
+            - name: Install Composer dependencies (inside PHP container)
+              run: |
+                  cd .docker
+                  docker compose exec -T php composer install --prefer-dist --no-progress --no-suggest
+
+            - name: Run PHPUnit tests (inside PHP container)
+              run: |
+                  cd .docker
+                  docker compose exec -T php bin/phpunit --coverage-text
+
+            - name: Run PHPStan (inside PHP container)
+              run: |
+                  cd .docker
+                  docker compose exec -T php vendor/bin/phpstan analyse src --level=max
+
+            - name: Run PHP CS Fixer (dry-run)
+              run: |
+                  cd .docker
+                  docker compose exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+
+            - name: Tear down services
+              if: always()
+              run: |
+                  cd .docker
+                  docker compose down -v --remove-orphans
