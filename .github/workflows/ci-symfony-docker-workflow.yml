@@ -18,10 +18,10 @@ jobs:
               working-directory: .docker
               run: |
                   # GitHub Actions не подхватывает .env автоматически — создадим его
-                  cp .env.dist .docker/.env
+                  cp .env.dist .env
                   # Или можно задать переменные напрямую, если .env не в репозитории
-                  # echo "APP_ENV=test" >> .docker/.env
-                  # echo "DATABASE_URL=mysql://bookstore_user:bookstore_password@mysql:3306/bookstore_db?serverVersion=8" >> .docker/.env
+                  # echo "APP_ENV=test" >> .env
+                  # echo "DATABASE_URL=mysql://bookstore_user:bookstore_password@mysql:3306/bookstore_db?serverVersion=8" >> .env
 
             - name: Start Docker Compose services
               working-directory: .docker
