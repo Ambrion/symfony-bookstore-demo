@@ -26,7 +26,7 @@ jobs:
             - name: Start Docker Compose services
               working-directory: .docker
               run: |
-                  docker compose up -d --wait
+                  docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --wait
 
             - name: Wait for MySQL readiness (optional extra safety)
               working-directory: .docker
