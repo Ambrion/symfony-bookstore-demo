@@ -1,0 +1,67 @@
+name: Symfony CI/CD Pipeline (using your .docker/docker-compose.yml)
+
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Copy .env for CI
+              run: |
+                  # GitHub Actions не подхватывает .env автоматически — создадим его
+                  cp .env.dist .docker/.env
+                  # Или можно задать переменные напрямую, если .env не в репозитории
+                  # echo "APP_ENV=test" >> .docker/.env
+                  # echo "DATABASE_URL=mysql://bookstore_user:bookstore_password@mysql:3306/bookstore_db?serverVersion=8" >> .docker/.env
+
+            - name: Start Docker Compose services
+              working-directory: .docker
+              run: |
+                  docker compose up -d --wait
+
+            - name: Wait for MySQL readiness (optional extra safety)
+              working-directory: .docker
+              run: |
+                  docker compose exec -T mysql mysqladmin ping -h localhost -u root --password="$MYSQL_ROOT_PASSWORD" --silent
+              env:
+                  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD || 'root' }}
+
+            - name: Install Composer dependencies (inside php container)
+              working-directory: .docker
+              run: |
+                  docker compose exec -T php composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+            - name: Run database migrations (if needed for tests)
+              working-directory: .docker
+              run: |
+                  docker compose exec -T php bin/console doctrine:database:create --if-not-exists --env=test
+                  docker compose exec -T php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+            - name: Run PHPUnit tests
+              working-directory: .docker
+              run: |
+                  docker compose exec -T php bin/phpunit --colors=never
+
+            - name: Run PHPStan
+              working-directory: .docker
+              run: |
+                  docker compose exec -T php vendor/bin/phpstan analyse src --level=max
+
+            - name: Run PHP CS Fixer (dry-run)
+              working-directory: .docker
+              run: |
+                  docker compose exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+
+            - name: Stop and remove containers
+              if: always()
+              working-directory: .docker
+              run: |
+                  docker compose down -v --remove-orphans
