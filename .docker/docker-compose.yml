@@ -44,13 +44,15 @@ services:
     volumes:
       - ../.docker/mysql-data:/var/lib/mysql:rw
     user: mysql
+    env_file:
+       - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     healthcheck:
-        test: ["CMD-SHELL", "mysqladmin -u root -p$$MYSQL_ROOT_PASSWORD ping -h mysql || exit 1"]
+        test: ["CMD-SHELL", "mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} ping -h mysql || exit 1"]
         start_period: 10s
         interval: 2s
         timeout: 5s
