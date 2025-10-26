@@ -36,7 +36,7 @@ jobs:
             - name: Install Composer dependencies (inside php container)
               working-directory: .docker
               run: |
-                  docker compose exec -T php composer install --prefer-dist --no-progress --no-suggest --no-interaction
+                  docker compose exec -T -u root php composer install --prefer-dist --no-progress --no-interaction
 
             - name: Run database migrations (if needed for tests)
               working-directory: .docker
