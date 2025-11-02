@@ -57,7 +57,7 @@ jobs:
                   (echo "User user_bookstore could not list databases after granting privileges"; exit 1)
               env:
                   # Pass the user password from the .docker/.env file
-                  MYSQL_PASSWORD: ${{ MYSQL_ROOT_PASSWORD }} # Use secret if available, fallback to default from .env
+                  MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD # Use secret if available, fallback to default from .env
                   # If your .env.dist has a fixed password, you can use it directly:
                   # MYSQL_PASSWORD: password_bookstore # Or the actual value from .env.dist
 
