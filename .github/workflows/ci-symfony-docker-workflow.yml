@@ -42,7 +42,6 @@ jobs:
                   echo 'DATABASE_URL="mysql://user_bookstore:password_bookstore@bookstore_mysql:3306/db_bookstore?serverVersion=9.3.0&charset=utf8mb4"' >> .env
 
             - name: Run database migrations (if needed for tests)
-              working-directory: .docker
               run: |
                   docker compose exec -T php bin/console doctrine:database:create --if-not-exists
                   docker compose exec -T php bin/console doctrine:migrations:migrate --no-interaction
