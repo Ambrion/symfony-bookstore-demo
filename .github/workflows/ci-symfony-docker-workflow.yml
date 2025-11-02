@@ -35,17 +35,12 @@ jobs:
               working-directory: .docker
               run: |
                   # Wait a bit more for MySQL to be fully ready after startup
-                  sleep 10
-                  # Execute the GRANT command in the MySQL container
-                  # Replace 'password_bookstore' with the actual password from your .env.dist or compose file if different
-                  docker compose exec -T mysql mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e \
-                    "GRANT ALL PRIVILEGES ON \`db_bookstore_test%\`.* TO 'user_bookstore'@'%'; FLUSH PRIVILEGES;"
-              env:
-                  # Pass the root password from the .docker/.env file (or set it explicitly if needed)
-                  # This assumes the password is set as MYSQL_ROOT_PASSWORD in the .env file loaded by docker-compose
-                  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD || 'password_root' }} # Use secret if available, fallback to default from .env
-                # If your .env.dist has a fixed password, you can use it directly:
-                # MYSQL_ROOT_PASSWORD: password_root # Or the actual value from .env.dist
+                  sleep 15
+                  # Execute the GRANT command in the MySQL container using the service name 'mysql'
+                  # Use the password directly from the .env file or set it as a variable
+                  # Using 'echo' and pipe to avoid exposing the password in the command line
+                  echo "GRANT ALL PRIVILEGES ON \`db_bookstore_test%\`.* TO 'user_bookstore'@'%'; FLUSH PRIVILEGES;" | \
+                  docker compose exec -T mysql mysql -u root -p"password_root" # Replace with the actual password from .env
 
             # Optional: Verify MySQL readiness again after granting privileges
             - name: Verify MySQL readiness after granting privileges
@@ -53,13 +48,9 @@ jobs:
               run: |
                   # A simple check to see if the user can connect and list databases
                   # This might help catch issues if the GRANT failed silently
-                  docker compose exec -T mysql mysql -u user_bookstore -p"$MYSQL_PASSWORD" -e "SHOW DATABASES;" || \
-                  (echo "User user_bookstore could not list databases after granting privileges"; exit 1)
-              env:
-                  # Pass the user password from the .docker/.env file
-                  MYSQL_PASSWORD: ${{ secrets.MYSQL_USER_PASSWORD || 'password_bookstore' }} # Use secret if available, fallback to default from .env
-                  # If your .env.dist has a fixed password, you can use it directly:
-                  # MYSQL_PASSWORD: password_bookstore # Or the actual value from .env.dist
+                  # Use the password directly here as well
+                  docker compose exec -T mysql mysql -u user_bookstore -p"password_bookstore" -e "SHOW DATABASES;" || \
+                  (echo "User user_bookstore could not list databases after granting privileges"; docker compose logs mysql; exit 1)
 
             # Install dependencies inside the PHP container
             - name: Install Composer dependencies (inside php container)
