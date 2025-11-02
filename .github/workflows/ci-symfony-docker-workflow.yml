@@ -43,7 +43,7 @@ jobs:
               env:
                   # Pass the root password from the .docker/.env file (or set it explicitly if needed)
                   # This assumes the password is set as MYSQL_ROOT_PASSWORD in the .env file loaded by docker-compose
-                  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD || 'password_root' }} # Use secret if available, fallback to default from .env
+                  MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD # Use secret if available, fallback to default from .env
                 # If your .env.dist has a fixed password, you can use it directly:
                 # MYSQL_ROOT_PASSWORD: password_root # Or the actual value from .env.dist
 
