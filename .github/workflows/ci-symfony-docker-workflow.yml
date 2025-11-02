@@ -44,23 +44,23 @@ jobs:
             - name: Run database migrations (if needed for tests)
               working-directory: .docker
               run: |
-                  docker compose exec -T php ../bin/console doctrine:database:create --if-not-exists
-                  docker compose exec -T php ../bin/console doctrine:migrations:migrate --no-interaction
+                  docker compose exec -T php bin/console doctrine:database:create --if-not-exists
+                  docker compose exec -T php bin/console doctrine:migrations:migrate --no-interaction
 
             - name: Run PHPUnit tests
               working-directory: .docker
               run: |
-                  docker compose exec -T php ../bin/phpunit --colors=never
+                  docker compose exec -T php bin/phpunit --colors=never
 
             - name: Run PHPStan
               working-directory: .docker
               run: |
-                  docker compose exec -T php ../vendor/bin/phpstan analyse src --level=max
+                  docker compose exec -T php vendor/bin/phpstan analyse src --level=max
 
             - name: Run PHP CS Fixer (dry-run)
               working-directory: .docker
               run: |
-                  docker compose exec -T php ../vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+                  docker compose exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
 
             - name: Stop and remove containers
               if: always()
