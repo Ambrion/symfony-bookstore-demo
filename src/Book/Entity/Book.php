@@ -5,11 +5,11 @@ namespace App\Book\Entity;
 use App\Author\Entity\Author;
 use App\Book\Repository\BookRepository;
 use App\Category\Entity\Category;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
