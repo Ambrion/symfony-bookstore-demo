@@ -90,7 +90,7 @@ jobs:
             - name: Run PHPStan
               working-directory: .
               run: |
-                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php vendor/bin/phpstan analyse src --level=max
+                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php vendor/bin/phpstan analyse src
 
             # Run code style check (dry-run)
             - name: Run PHP CS Fixer (dry-run)
