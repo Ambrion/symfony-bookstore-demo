@@ -84,19 +84,19 @@ jobs:
             - name: Run PHPUnit tests
               working-directory: . # Run from project root where phpunit.xml.dist might be
               run: |
-                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php bin/phpunit --colors=never --env=test
+                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php bin/phpunit --colors=never
 
             # Run static analysis
             - name: Run PHPStan
               working-directory: .
               run: |
-                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php vendor/bin/phpstan analyse src --level=max --env=test
+                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php vendor/bin/phpstan analyse src --level=max
 
             # Run code style check (dry-run)
             - name: Run PHP CS Fixer (dry-run)
               working-directory: .
               run: |
-                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose --env=test
+                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
 
             # Ensure containers are stopped even if previous steps fail
             - name: Stop and remove containers
