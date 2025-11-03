@@ -96,7 +96,7 @@ jobs:
             - name: Run PHP CS Fixer (dry-run)
               working-directory: .
               run: |
-                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+                  docker compose -f .docker/docker-compose.yml -f .docker/docker-compose.ci.yml exec -T php vendor/bin/php-cs-fixer fix --dry-run --diff --verbose --using-cache=no
 
             # Ensure containers are stopped even if previous steps fail
             - name: Stop and remove containers
